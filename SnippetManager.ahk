@@ -4,9 +4,9 @@ global MyMenu
 global BaseFolder := A_ScriptDir . "\Snippets"
 global extensions := ["txt"]
 
-#Include includes\customTray.ahk
+#Include lib\FolderStructure.ahk
+#Include lib\customTray.ahk
 
-#Include includes\FolderStructure.ahk
 Tray := A_TrayMenu
 Tray.Add()  ; Creates a separator line.
 for k,v in ["CTRL x2`tShow Menu",
@@ -65,22 +65,42 @@ Main(){
 	myMenu.Show()
 }
 
+
+
+; | Modifier Key   | Action   |
+; |---------------|-----------|
+; | Ctrl + Shift  | Overwrite |
+; | Ctrl          | Edit      |
+; | Shift         | Append    |
+; | (None)        | Paste     |
+
+
 theHandlerFunction(filePath, *) {
-
-	if GetKeyState("Ctrl"){
-		Run 'edit '  filePath
-	}else if GetKeyState("Shift"){
-		Send("{Ctrl down}c{Ctrl up}")
-		Sleep(100)
-		text := "`n" A_Clipboard
-		FileAppend(text, filePath)
-	}else{
-		text := FileRead(filePath)
-		A_Clipboard := text
-		Sleep(100)
-		Send("{Ctrl down}v{Ctrl up}")			
-	}
-
+    if GetKeyState("Ctrl") && GetKeyState("Shift") { 
+        ; Overwrite the file with clipboard content
+        Send("{Ctrl down}c{Ctrl up}")
+        Sleep(100)
+        text := "`n" A_Clipboard        
+		FileDelete(filePath)  ; Delete the file before overwriting
+        FileAppend(A_Clipboard, filePath)
+    } else if GetKeyState("Ctrl") { 
+        ; Open the file in an editor
+        Run 'edit ' filePath
+    } else if GetKeyState("Shift") { 
+        ; Append clipboard content to the file
+        Send("{Ctrl down}c{Ctrl up}")
+        Sleep(100)
+        text := "`n" A_Clipboard
+        FileAppend(text, filePath)
+    } else { 
+        ; Copy the file content and paste it
+        text := FileRead(filePath)
+        A_Clipboard := text
+        Sleep(100)
+        Send("{Ctrl down}v{Ctrl up}")
+    }
 }
+
+
 
 

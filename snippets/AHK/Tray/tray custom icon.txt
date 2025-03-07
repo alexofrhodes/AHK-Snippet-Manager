@@ -1,3 +1,0 @@
-﻿TrayIcon := StrReplace("settings\" . A_ScriptName, ".ahk", ".ico")
-try
-    menu, tray, icon, %TrayIcon%

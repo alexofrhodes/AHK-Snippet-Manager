@@ -1,8 +1,0 @@
-﻿; SAVED FROM : http://autohotkey.com/boards/viewtopic.php?style=7&t=38777 
-
-vExt := ".jpeg"
-DllCall("shlwapi\AssocQueryString", Int,0, Int,1, Str,vExt, Ptr,0, Ptr,0, UIntP,vChars)
-VarSetCapacity(vTarget, vChars << !!A_IsUnicode, 0)
-DllCall("shlwapi\AssocQueryString", Int,0, Int,1, Str,vExt, Ptr,0, Str,vTarget, UIntP,vChars)
-Clipboard := vTarget
-MsgBox, % vTarget

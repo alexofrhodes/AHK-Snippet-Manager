@@ -3,7 +3,7 @@
 #SingleInstance, Force
 SetKeyDelay, 50
 
-#Include, includes\guiSaveRestore.ahk
+#Include, lib\guiSaveRestore.ahk
 
 ModernBrowsers := "ApplicationFrameWindow,Chrome_WidgetWin_0,Chrome_WidgetWin_1,Maxthon3Cls_MainFrm,MozillaWindowClass,Slimjet_WidgetWin_1"
 LegacyBrowsers := "IEFrame,OperaWindowClass"

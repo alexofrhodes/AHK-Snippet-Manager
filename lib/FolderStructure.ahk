@@ -7,7 +7,7 @@
 ; - HandlerFunctionName: the name of the function to be called when the menu entry is selected
 ; returns a list of all file paths within the folder, separated by `n
 
-;//TODO Save to new folder
+; @TODO Save to new folder
 
 AddFolderStructureToMenu(menuObj, FolderPath, extensions, HandlerFunctionName) {
 	Local i := 0, FolderList := "", FileList := "", PathList := "", iconIndex := 0
@@ -24,8 +24,8 @@ AddFolderStructureToMenu(menuObj, FolderPath, extensions, HandlerFunctionName) {
     menuObj.Add("Open Folder", (*) => OpenFolder(FolderPath))
     menuObj.SetIcon("Open Folder", "icons\openfolder.ico")
 
-	menuObj.Add("Cancel", DoNothing)
-	menuObj.SetIcon("Cancel","icons\cancel.ico")
+	; menuObj.Add("Cancel", DoNothing)
+	; menuObj.SetIcon("Cancel","icons\cancel.ico")
 
 	menuObj.add
 	
@@ -77,54 +77,64 @@ OpenFolder(folderPath, *){
 
 SaveSelection(folderPath, *) {
     tmp := A_Clipboard
-	A_Clipboard := ""
+    A_Clipboard := ""
     Send("{Ctrl down}c{Ctrl up}")
     Sleep(100)
     text := "`n" A_Clipboard
-    ib := InputBox("(filename.extension)", "save as", ,A_Now ".txt" )
 
-	if IB.Result = "Ok"
-        FileAppend(text, folderPath "\" IB.Value)
+    ; Prompt user for filename
+    ib := InputBox("(filename.extension)", "Save As", , A_Now ".txt")
 
+    ; Exit if canceled or empty filename
+    if ib.Result != "Ok" || ib.Value = ""
+        return
+
+    ; Save the file
+    FileAppend(text, folderPath "\" ib.Value)
+
+    ; Restore clipboard content
     A_Clipboard := tmp
 }
 
 SaveSelectionToNewFolder(folderPath,  *) {
-    ; Get the folder path from user
+    ; Prompt user for new folder name
     ib := InputBox("Folder Selection", "Enter the new folder name:", , "")
 
-    ; Exit if no folder path is provided
-    if ib.Result = ""
-        return
-	NewFolderPath := folderPath "\" ib.Value
-    ; Create the folder if it doesn't exist
-    if !DirExist(NewFolderPath)
-        DirCreate(NewFolderPath)
-
-    ; If folder creation failed, return
-    if !DirExist(NewFolderPath)
-        return
-	ib := ""
-    ; Get the filename from user
-    ib := InputBox("(filename.extension)", "Save As", , A_Now ".txt")
-
-    ; Exit if no file name is provided
+    ; Exit if canceled or empty folder name
     if ib.Result != "Ok" || ib.Value = ""
         return
 
-    ; Copy the selected text to clipboard
+    NewFolderPath := folderPath "\" ib.Value
+
+    ; Create folder if it doesn't exist
+    if !DirExist(NewFolderPath)
+        DirCreate(NewFolderPath)
+
+    ; Exit if folder creation failed
+    if !DirExist(NewFolderPath)
+        return
+
+    ; Prompt user for filename
+    ib := InputBox("(filename.extension)", "Save As", , A_Now ".txt")
+
+    ; Exit if canceled or empty filename
+    if ib.Result != "Ok" || ib.Value = ""
+        return
+
+    ; Copy selected text to clipboard
     tmp := A_Clipboard
     A_Clipboard := ""
     Send("^c") ; Simulate Ctrl+C to copy
     Sleep(100)
     text := "`n" A_Clipboard
 
-    ; Append text to the file
+    ; Save file in the new folder
     FileAppend(text, NewFolderPath "\" ib.Value)
 
-    ; Restore the original clipboard content
+    ; Restore clipboard content
     A_Clipboard := tmp
 }
+
 
 
 HasVal(haystack, needle) {

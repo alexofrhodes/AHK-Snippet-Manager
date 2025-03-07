@@ -1,8 +1,0 @@
-﻿; SAVED FROM : FolderStructure Example.ahk - FolderStructure - Visual Studio Code 
-
-
-~Ctrl Up:: 
-{
-	If A_ThisHotkey = A_PriorHotkey && A_TimeSincePriorHotkey < 400
-		Main()
-}
